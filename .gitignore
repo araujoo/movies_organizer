@@ -1,0 +1,14 @@
+Subs
+Torrents
+Sources
+*.torrent
+*.srt
+*.rar
+*.zip
+"bkp test/*"
+teste_
+script_bkp
+.DS_Store
+"bkp test/"
+
+

@@ -1,0 +1,10 @@
+FILES_NUM=0
+FILE_REGEXS=( '[sS][0-9]{2}[eE][0-9]{2}' '[0-9]{3}' )
+EXTENSION_REGEX='\.[a-z]*$'
+COMPACT_EXTENSIONS=( ".rar" ".zip" )
+SUB_EXTENSIONS='.srt'
+MOV_EXTENSIONS='.mkv .mp4 .avi'
+SUBS_BKP_DIR='Subs'
+TORRENTS_BKP_DIR='Torrents'
+SOURCES_BKP_DIR='Sources'
+FILE_LIST=""

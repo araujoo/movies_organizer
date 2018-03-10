@@ -1,0 +1,66 @@
+#!/bin/bash
+source macros.sh
+source functions.sh
+
+#extract files
+for i in *.zip *.rar
+do
+	extract_file "${i}"
+done
+
+#generate file backup
+if [ ! -d "${SUBS_BKP_DIR}" ]
+then
+	echo "Creating subtitles folder"
+	mkdir "${SUBS_BKP_DIR}"
+fi
+
+if [ ! -d "${TORRENTS_BKP_DIR}" ]
+then
+	echo "Creating torrents folder"
+	mkdir "${TORRENTS_BKP_DIR}"
+fi
+
+if [ ! -d "${SOURCES_BKP_DIR}" ]
+then
+	echo "Creating sources folder"
+	mkdir "${SOURCES_BKP_DIR}"
+fi
+
+#bkping
+echo "Saving sources, torrents and subtitles"
+cp -rnv *.srt "${SUBS_BKP_DIR}"
+cp -rnv *.torrent "${TORRENTS_BKP_DIR}"
+cp -rnv *.rar *.zip "${TORRENTS_BKP_DIR}"
+
+#isolating subtitle files
+rm *.torrent
+
+#renaming subtitles
+for file in *.srt
+do
+	NEW_FILE_NAME=''
+	NEW_FILE_NAME="$(get_new_file_name ${file})"
+	#echo "novo nome = ${NEW_FILE_NAME}"
+	if [ $? -eq 0 ]
+	then
+		#check if this value already exists in array list
+		#FILE="$(check_file_in_list "${NEW_FILE_NAME}" "${FILE_LIST}")"
+		#echo "result = $? RES=$RES"
+		check_file_in_list "${NEW_FILE_NAME}" "${FILE_LIST}"
+		if [ $? -eq 0 ]
+		then
+			continue
+		else
+			#rename the file
+			mv "$file" "${NEW_FILE_NAME}.srt"
+			FILE_LIST="${FILE_LIST}:${NEW_FILE_NAME}.srt"
+		fi
+	else
+		#show an error message
+		echo " "
+	fi
+done
+
+
+
