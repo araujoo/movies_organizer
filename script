@@ -2,8 +2,12 @@
 source macros.sh
 source functions.sh
 
+#alias a='rm -r S07E0* *.torrent *.srt Subs Torrents Sources' alias ls='ls --color=auto' alias s='./script'
+
+
+
 #extract files
-for i in *.zip *.rar
+for i in ./*.zip ./*.rar
 do
 	extract_file "${i}"
 done
@@ -29,38 +33,56 @@ fi
 
 #bkping
 echo "Saving sources, torrents and subtitles"
-cp -rnv *.srt "${SUBS_BKP_DIR}"
-cp -rnv *.torrent "${TORRENTS_BKP_DIR}"
-cp -rnv *.rar *.zip "${TORRENTS_BKP_DIR}"
+cp -rn *.srt "${SUBS_BKP_DIR}"
+cp -rn *.torrent "${TORRENTS_BKP_DIR}"
+cp -rn *.rar *.zip "${SOURCES_BKP_DIR}"
 
 #isolating subtitle files
 rm *.torrent
+rm *.zip *.rar
 
 #renaming subtitles
-for file in *.srt
+for file in ./*.srt
 do
 	NEW_FILE_NAME=''
 	NEW_FILE_NAME="$(get_new_file_name ${file})"
-	#echo "novo nome = ${NEW_FILE_NAME}"
 	if [ $? -eq 0 ]
 	then
 		#check if this value already exists in array list
-		#FILE="$(check_file_in_list "${NEW_FILE_NAME}" "${FILE_LIST}")"
-		#echo "result = $? RES=$RES"
 		check_file_in_list "${NEW_FILE_NAME}" "${FILE_LIST}"
 		if [ $? -eq 0 ]
 		then
+			rm "$file"
 			continue
 		else
 			#rename the file
-			mv "$file" "${NEW_FILE_NAME}.srt"
-			FILE_LIST="${FILE_LIST}:${NEW_FILE_NAME}.srt"
+			mv "$file" "${NEW_FILE_NAME}.srt" > "/dev/null"
+			FILE_LIST="${FILE_LIST}:${NEW_FILE_NAME}"
 		fi
 	else
 		#show an error message
-		echo " "
+		echo "Could not process $file"
 	fi
 done
 
-
-
+IFS=
+find . -type f \( -name '*.avi' -o -name '*.mkv' -o -name '*.mp4' \) -print0 | 
+while read -rd '' movie
+do
+	#echo "printando $movie" 
+	NEW_FILE_NAME=
+	NEW_FILE_NAME="$(get_new_file_name ${movie})"
+	if [ $? -eq 0 ]
+	then
+		EXTENS=
+		EXTENS="$(get_file_extension ${movie})"
+		if [ $? -eq 0 ] && [ ! -z ${EXTENS} ]
+		then
+			#rename the file
+			mv "${movie}" "./${NEW_FILE_NAME}${EXTENS}" > /dev/null
+		fi
+	else
+		#show an error message
+		echo "Could not process $movie"
+	fi
+done
