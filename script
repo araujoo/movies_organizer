@@ -2,7 +2,6 @@
 source macros.sh
 source functions.sh
 
-
 #checking dependencies
 check_dependencies
 
@@ -76,26 +75,26 @@ do
 	mv "$file" "${TORRENTS_BKP_DIR}"
 done
 
-echo "Processing movies files"
+echo "Processing episodes files"
 find . -type f \( -name '*.avi' -o -name '*.mkv' -o -name '*.mp4' \) -print0 | 
-while IFS= read -rd '' movie
+while IFS= read -rd '' episode
 do
-	#echo "printing $movie" 
+	#echo "printing $episode" 
 	NEW_FILE_NAME=
-	NEW_FILE_NAME="$(get_new_file_name "${movie}")"
+	NEW_FILE_NAME="$(get_new_file_name "${episode}")"
 	if [ $? -eq 0 ]
 	then
 		EXTENS=
-		EXTENS="$(get_file_extension "${movie}")"
+		EXTENS="$(get_file_extension "${episode}")"
 		if [ $? -eq 0 ] && [ -n ${EXTENS} ]
 		then
 			#rename the file
-			mv "${movie}" "./${NEW_FILE_NAME}${EXTENS}"
+			mv "${episode}" "./${NEW_FILE_NAME}${EXTENS}"
 		else
 			echo "${EXTENS_FAILED}"
 		fi
 	else
 		#show an error message
-		echo "${COULD_NOT_PROCESS} $movie: ${NEW_FILE_NAME}"
+		echo "${COULD_NOT_PROCESS} $episode: ${NEW_FILE_NAME}"
 	fi
 done
