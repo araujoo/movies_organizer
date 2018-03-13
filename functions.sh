@@ -1,7 +1,7 @@
 get_new_file_name()
 {
 	local NEW_FILE_NAME RC_CODE
-	#echo "entrei aqui com ${1}"
+
 	#test wich regex applies to the given filename
 	for i in ${!FILE_REGEXS[@]}
 	do
@@ -39,10 +39,14 @@ get_new_file_name()
 				;;
 				
 			*)
-				NEW_FILE_NAME="Failed to identify pattern. Please, add a new one."
+				NEW_FILE_NAME="${PATTERN_NOT_IDENTIFIED}"
 				RC_CODE=1
 				;;
 		esac
+	else
+		NEW_FILE_NAME="${PATTERN_NOT_IDENTIFIED}"
+		RC_CODE=1
+		;;
 	fi
 	echo "${NEW_FILE_NAME}"
 	return ${RC_CODE}

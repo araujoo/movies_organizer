@@ -13,5 +13,11 @@ readonly SPECIAL_CHARS_REGEX='[^A-Za-z0-9]'
 #global var list
 FILE_LIST=
 
+#error messages
+PATTERN_NOT_IDENTIFIED="Failed on identifying pattern"
+COULD_NOT_PROCESS="Failed on identifying pattern"
+EXTENS_FAILED="Failed on identifying extension"
+
+
 #fatal error lists
 readonly DEPENDENCIES_FAILURE=1
