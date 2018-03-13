@@ -86,3 +86,22 @@ check_file_in_list()
 	done
 	return ${RC_CODE=1}
 }
+
+check_dependencies()
+{
+	echo -n "Checking dependencies"
+	if [ $(bash --version > /dev/null && echo $?) -ne 0 ]
+	then
+		echo "missing bash"
+		exit $DEPENDENCIES_FAILURE
+	elif [ $(unrar --version > /dev/null && echo $?) -ne 0 ]
+	then
+		echo "missing unrar"
+		exit $DEPENDENCIES_FAILURE
+	elif [ $(unzip -v > /dev/null && echo $?) -ne 0 ]
+	then
+		echo "missing unzip"
+		exit $DEPENDENCIES_FAILURE
+	fi
+	echo " ....OK"
+}

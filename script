@@ -2,6 +2,10 @@
 source macros.sh
 source functions.sh
 
+
+#checking dependencies
+check_dependencies
+
 #generate file backup dir
 if [ ! -d "${SUBS_BKP_DIR}" ]
 then
