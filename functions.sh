@@ -8,13 +8,13 @@ get_new_file_name()
 		#echo "testing ${1} with ${FILE_REGEXS[i]}"
 		NEW_FILE_NAME=''
 	    NEW_FILE_NAME="$(echo ${1} | egrep -o ${SPECIAL_CHARS_REGEX}${FILE_REGEXS[$i]}${SPECIAL_CHARS_REGEX}* )"
-		if [ ! -z "${NEW_FILE_NAME}" ]
+		if [ -n "${NEW_FILE_NAME}" ]
 		then
 			break
 		fi
 	done
 
-	if [ ! -z "${NEW_FILE_NAME}" ]
+	if [ -n "${NEW_FILE_NAME}" ]
 	then
 
 		#cleans the filename
@@ -78,7 +78,7 @@ check_file_in_list()
 	for f in ${2}
 	do
 		#echo "comparing ${f} with ${1}"
-		if [ "${f}" == "${1}" ] && [ ! -z "${f}" ]
+		if [ "${f}" == "${1}" ] && [ -n "${f}" ]
 		then
 			RC_CODE=0;
 			break

@@ -2,17 +2,9 @@
 source macros.sh
 source functions.sh
 
-#alias a='rm -r S07E0* *.torrent *.srt Subs Torrents Sources' alias ls='ls --color=auto' alias s='./script'
+#alias a='rm -r S07E0* *.torrent *.srt Subs Torrents Sources';alias s='./script'
 
-
-
-#extract files
-for i in ./*.zip ./*.rar
-do
-	extract_file "${i}"
-done
-
-#generate file backup
+#generate file backup dir
 if [ ! -d "${SUBS_BKP_DIR}" ]
 then
 	echo "Creating subtitles folder"
@@ -31,18 +23,31 @@ then
 	mkdir "${SOURCES_BKP_DIR}"
 fi
 
-#bkping
-echo "Saving sources, torrents and subtitles"
-cp -rn *.srt "${SUBS_BKP_DIR}"
-cp -rn *.torrent "${TORRENTS_BKP_DIR}"
-cp -rn *.rar *.zip "${SOURCES_BKP_DIR}"
+echo "Finding and Backuping sources files"
+find . -type f \( -name "*.rar" -o -name "*.zip" \) -print0 |
+while IFS= read -rd '' file
+do
+	cp -rn "$file" "${SOURCES_BKP_DIR}"
+	#mv "$file" "${SOURCES_BKP_DIR}"
+done
 
-#isolating subtitle files
+echo "Exctracting source files"
+cd "${SOURCES_BKP_DIR}"
+for i in ./*.zip ./*.rar
+do
+	extract_file "${i}"
+done
+
+cd ../
+
+echo "Cleaning folder"
 rm *.torrent
+rm *.srt
 rm *.zip *.rar
 
-#renaming subtitles
-for file in ./*.srt
+echo "Processing subtitle files"
+find . -type f -name "*.srt" -print0 |
+while IFS= read -rd '' file
 do
 	NEW_FILE_NAME=''
 	NEW_FILE_NAME="$(get_new_file_name ${file})"
@@ -50,36 +55,41 @@ do
 	then
 		#check if this value already exists in array list
 		check_file_in_list "${NEW_FILE_NAME}" "${FILE_LIST}"
-		if [ $? -eq 0 ]
+		if [ $? -ne 0 ]
 		then
-			rm "$file"
-			continue
-		else
-			#rename the file
-			mv "$file" "${NEW_FILE_NAME}.srt" > "/dev/null"
+			#adjust subtitle
+			cp -rn "$file" "./${NEW_FILE_NAME}.srt"
 			FILE_LIST="${FILE_LIST}:${NEW_FILE_NAME}"
 		fi
+		mv "$file" "${SUBS_BKP_DIR}"
 	else
 		#show an error message
 		echo "Could not process $file"
 	fi
 done
 
-IFS=
-find . -type f \( -name '*.avi' -o -name '*.mkv' -o -name '*.mp4' \) -print0 | 
-while read -rd '' movie
+echo "Processing torrent files"
+find . -type f -name "*.torrent" -print0 |
+while IFS= read -rd '' file
 do
-	#echo "printando $movie" 
+	mv "$file" "${TORRENTS_BKP_DIR}"
+done
+
+echo "Processing movies files"
+find . -type f \( -name '*.avi' -o -name '*.mkv' -o -name '*.mp4' \) -print0 | 
+while IFS= read -rd '' movie
+do
+	#echo "printing $movie" 
 	NEW_FILE_NAME=
-	NEW_FILE_NAME="$(get_new_file_name ${movie})"
+	NEW_FILE_NAME="$(get_new_file_name "${movie}")"
 	if [ $? -eq 0 ]
 	then
 		EXTENS=
-		EXTENS="$(get_file_extension ${movie})"
-		if [ $? -eq 0 ] && [ ! -z ${EXTENS} ]
+		EXTENS="$(get_file_extension "${movie}")"
+		if [ $? -eq 0 ] && [ -n ${EXTENS} ]
 		then
 			#rename the file
-			mv "${movie}" "./${NEW_FILE_NAME}${EXTENS}" > /dev/null
+			mv "${movie}" "./${NEW_FILE_NAME}${EXTENS}"
 		fi
 	else
 		#show an error message
