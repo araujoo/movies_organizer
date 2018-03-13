@@ -29,8 +29,7 @@ echo "Finding and Backuping sources files"
 find . -type f \( -name "*.rar" -o -name "*.zip" \) -print0 |
 while IFS= read -rd '' file
 do
-	cp -rn "$file" "${SOURCES_BKP_DIR}"
-	#mv "$file" "${SOURCES_BKP_DIR}"
+	mv "$file" "${SOURCES_BKP_DIR}"
 done
 
 echo "Exctracting source files"
