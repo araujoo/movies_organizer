@@ -2,8 +2,6 @@
 source macros.sh
 source functions.sh
 
-#alias a='rm -r S07E0* *.torrent *.srt Subs Torrents Sources';alias s='./script'
-
 #generate file backup dir
 if [ ! -d "${SUBS_BKP_DIR}" ]
 then
